@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "nlKhTO39M8dq7O1P1kHkSRP8PHG82D/AuPi5QlNqq8lLohdBxBxE6HglruTzIe3RgF3lxRyGg1ceohKmdjNfkQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\simas\\OneDrive\\Documents\\Programavimas\\GamesApp\\GamesApp\\GamesApp.iOS\\GamesApp.iOS.csproj",
+  "expectedPackageFiles": [
+    "C:\\Microsoft\\Xamarin\\NuGet\\xamarin.essentials\\1.5.3.2\\xamarin.essentials.1.5.3.2.nupkg.sha512",
+    "C:\\Microsoft\\Xamarin\\NuGet\\xamarin.forms\\4.8.0.1451\\xamarin.forms.4.8.0.1451.nupkg.sha512"
+  ],
+  "logs": []
+}
