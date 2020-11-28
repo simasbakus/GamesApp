@@ -6,9 +6,25 @@
     <ContentPage.BindingContext>
         <local:MainPageViewModel/>
     </ContentPage.BindingContext>
-    
-    <Label Text="{Binding name}" Margin="50"/>
-    
+
+    <CollectionView ItemsSource="{Binding Games}" Margin="0,50">
+        <CollectionView.ItemsLayout>
+            <LinearItemsLayout Orientation="Vertical"/>
+        </CollectionView.ItemsLayout>
+        <CollectionView.ItemTemplate>
+            <DataTemplate>
+                <StackLayout>
+                    <Frame >
+                        <StackLayout Orientation="Horizontal">
+                            <Label Text="{Binding Date}"/>
+                            <Label Text="{Binding Teams}"/>
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
+
     <!--
     <StackLayout>
         <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">

@@ -1,16 +1,19 @@
-﻿using System;
+﻿using GamesApp.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace GamesApp.ViewModels
 {
-    class MainPageViewModel
+    public class MainPageViewModel
     {
-        public string name { get; set; }
+        DBService dbService = new DBService();
+        public List<Game> Games { get; }
 
         public MainPageViewModel()
         {
-            this.name = "Simas Bakus";
+            // Get all the games, sort by Date descending
+            this.Games = dbService.GetGames(-1);
         }
     }
 }
