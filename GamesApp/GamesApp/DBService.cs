@@ -13,8 +13,8 @@ namespace GamesApp
         public IMongoDatabase DB;
         public DBService()
         {
-            MongoClient client = new MongoClient(/**/);
-            this.DB = client.GetDatabase(/**/);
+            MongoClient client = new MongoClient(///////);
+            this.DB = client.GetDatabase(///////);
         }
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace GamesApp
         /// <returns>A list of documents based on Model Games</returns>
         public List<Game> GetGames(int sorter)
         {
-            return DB.GetCollection<Game>(/**/)
+            return DB.GetCollection<Game>(//////)
                         .Find(g => true)                  // get all
                         .Sort("{ Date: " + sorter + "}")  // sort by Date
                         .ToList();
