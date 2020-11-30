@@ -11,11 +11,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\headerGamesApp.jpg" />
     <None Remove="Images\headrefjersey.jpg" />
     <None Remove="Images\linesmanjersey.jpg" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Images\headerGamesApp.jpg" />
     <EmbeddedResource Include="Images\headrefjersey.jpg" />
     <EmbeddedResource Include="Images\linesmanjersey.jpg" />
   </ItemGroup>

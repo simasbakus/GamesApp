@@ -7,19 +7,49 @@
     <ContentPage.BindingContext>
         <viewmodel:MainPageViewModel/>
     </ContentPage.BindingContext>
-    <StackLayout>
-        <Frame BackgroundColor="LightSkyBlue" Padding="50" CornerRadius="0">
-            <Label Text="Officiated Games" HorizontalTextAlignment="Center" TextColor="Black" FontSize="36"/>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="200"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Frame Padding="0" >
+            <Image Aspect="AspectFill"  Source="{local:ImageResourceExt GamesApp.Images.headerGamesApp.jpg}" Opacity="0.9"/>
         </Frame>
+        
+        <StackLayout Grid.Row="1" Orientation="Horizontal">
+            <Button Command="{Binding ShowAllCommand}" FontSize="Small" TextColor="Black">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding ShowAll}" Value="true">
+                        <Setter Property="Text" Value="Month"/>
+                    </DataTrigger>
+                    <DataTrigger TargetType="Button" Binding="{Binding ShowAll}" Value="false">
+                        <Setter Property="Text" Value="All"/>
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+            <Label FontSize="Title">
+                <Label.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding ShowAll}" Value="true">
+                        <Setter Property="Text" Value="All"/>
+                    </DataTrigger>
+                    <DataTrigger TargetType="Label" Binding="{Binding ShowAll}" Value="false">
+                        <Setter Property="Text" Value="Month"/>
+                    </DataTrigger>
+                </Label.Triggers>
+            </Label>
+            <Label Text="{Binding Games.Count}"/>
+        </StackLayout>
 
-        <CollectionView ItemsSource="{Binding Games}">
+        <CollectionView ItemsSource="{Binding Games}" Grid.Row="2">
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout Orientation="Vertical" ItemSpacing="5"/>
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <StackLayout>
-                        <Frame Margin="10,5" Padding="5" BackgroundColor="GhostWhite"
+                        <Frame Margin="10,0" Padding="5" BackgroundColor="White"
                            CornerRadius="10" HeightRequest="125" InputTransparent="True"
                            IsClippedToBounds="True" HasShadow="True">
                             <Grid Padding="0" ColumnSpacing="10">
@@ -27,22 +57,34 @@
                                     <ColumnDefinition Width="85"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <!--Make Image change source based on Games.Position!!!!!-->
-                                <Image Aspect="AspectFit" Source="{local:ImageResourceExt GamesApp.Images.linesmanjersey.jpg}"/>
+                                
+                                <Image Aspect="AspectFit">
+                                    <Image.Triggers>
+                                        <DataTrigger TargetType="Image" Binding="{Binding Position}" Value="Linesman">
+                                            <Setter Property="Source" 
+                                                    Value="{local:ImageResourceExt GamesApp.Images.linesmanjersey.jpg}"/>
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Image" Binding="{Binding Position}" Value="Referee">
+                                            <Setter Property="Source" 
+                                                    Value="{local:ImageResourceExt GamesApp.Images.headrefjersey.jpg}"/>
+                                        </DataTrigger>
+                                    </Image.Triggers>
+                                </Image>
+                                
                                 <StackLayout Grid.Column="1" Padding="10"
                                          VerticalOptions="Center">
-                                    <Label Text="{Binding Date}" HorizontalTextAlignment="End"/>
+                                    <Label Text="{Binding DateStr}" HorizontalTextAlignment="End"/>
                                     <Label Text="{Binding Division}" FontAttributes="Bold" HorizontalTextAlignment="End"/>
                                     <Label Text="{Binding Teams}" HorizontalTextAlignment="End"/>
                                 </StackLayout>
+                                
                             </Grid>
                         </Frame>
                     </StackLayout>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-    </StackLayout>
-    
+    </Grid>
 
     <!--
     <StackLayout>
