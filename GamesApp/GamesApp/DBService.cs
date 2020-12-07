@@ -14,40 +14,47 @@ namespace GamesApp
         public DBService()
         {
             MongoClient client = new MongoClient(///////);
-            this.DB = client.GetDatabase(/////////);
+            this.DB = client.GetDatabase(////////);
         }
 
-        /// <summary>
-        /// Get all the documents from DataBase collection
-        /// </summary>
-        /// <param name="sorter">1 for ascending sort, -1 for descending sort</param>
-        /// <returns>A list of documents based on Model Games</returns>
         public List<Game> GetGames()
         {
-            return DB.GetCollection<Game>(/////////)
+            return DB.GetCollection<Game>(////////)
                         .Find(g => true)      // get all
                         .Sort("{ Date: -1}")  // sort by Date
                         .ToList();
         }
 
         /// <summary>
+        /// Get all the documents from DataBase collection
+        /// </summary>
+        /// <returns>A list of documents based on Model Games</returns>
+        public Task<List<Game>> GetGamesAsync()
+        {
+            return DB.GetCollection<Game>(////////)
+                        .Find(g => true)      // get all
+                        .Sort("{ Date: -1}")  // sort by Date
+                        .ToListAsync();
+        }
+
+        /// <summary>
         /// Get documents from DataBase collection based on showAll value
         /// </summary>
-        /// <param name="showAll">True to show all, False to show current month's</param>
+        /// <param name="showMonth">False to show all, True to show current month's</param>
         /// <returns>A list of documents based on Model Games</returns>
-        public List<Game> GetGamesMainFilter(bool showAll)
+        public Task<List<Game>> GetGamesMainFilterAsync(bool showMonth, int curMonth)
         {
-            if (showAll == false)
+            DateTime selectedMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(curMonth);
+            if (showMonth == true)
             {
                 return DB.GetCollection<Game>(////////)
-                        .Find(g => g.Date >= new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1)
-                                    && g.Date < new DateTime(DateTime.Now.Year, DateTime.Now.Month + 1, 1))  // get this month's
-                        .Sort("{ Date: -1}")                                                                 // sort by Date
-                        .ToList();
+                        .Find(g => g.Date >= selectedMonth && g.Date < selectedMonth.AddMonths(1))  // get this month's
+                        .Sort("{ Date: -1}")  // sort by Date
+                        .ToListAsync();
             }
             else
             {
-                return this.GetGames();
+                return GetGamesAsync();
             }
         }
     }
