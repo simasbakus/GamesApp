@@ -17,16 +17,15 @@
             </Grid.RowDefinitions>
 
             <!-- Header image -->
-            <Frame Padding="0" HasShadow="False">
-                <Image Aspect="AspectFill"  Source="{local:ImageResourceExt GamesApp.Images.headerGamesApp.jpg}" Opacity="0.9"/>
-            </Frame>
-
+            <Image Aspect="AspectFill"  Source="{local:ImageResourceExt GamesApp.Images.headerGamesApp.jpg}" Opacity="0.9"/>
+            
             <!-- User Interface -->
             <Frame Grid.Row="1" Padding="0" BackgroundColor="GhostWhite" HasShadow="True"
                    CornerRadius="10" Margin="2,0,2,2">
                 <Grid RowSpacing="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="60"/>
+                        <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
@@ -83,95 +82,91 @@
                     </Frame>
 
                     <!-- Filter selection frame -->
-                    <Frame Padding="0" HasShadow="False" Grid.Row="1" IsVisible="{Binding ShowFilter}" BorderColor="Black">
-                        <Label Text="Filter coming soon!" Margin="10" HorizontalOptions="Center"/>
-                    </Frame>
+                    <CollectionView ItemsSource="{Binding Divisions}" Grid.Row="1" BackgroundColor="White">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical" Span="2"/>
+                        </CollectionView.ItemsLayout>
+                        <!-- Workaround because VerticalGrid layout doesn't work when CollectionView initial isVisible = false -->
+                        <CollectionView.Triggers>
+                            <DataTrigger TargetType="CollectionView" Binding="{Binding ShowFilter}" Value="true">
+                                <Setter Property="HeightRequest" Value="130"/>
+                            </DataTrigger>
+                            <DataTrigger TargetType="CollectionView" Binding="{Binding ShowFilter}" Value="false">
+                                <Setter Property="HeightRequest" Value="0"/>
+                            </DataTrigger>
+                        </CollectionView.Triggers>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout Padding="0" Orientation="Horizontal" Spacing="0">
+                                    <StackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ToggleIsChecked}"/>
+                                    </StackLayout.GestureRecognizers>
+                                    
+                                    <CheckBox VerticalOptions="Center" IsChecked="{Binding IsChecked}" Margin="30,0,20,0"/>
+                                    <Label Text="{Binding Label}" VerticalOptions="Center"/>
+                                </StackLayout>
+                                
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
 
                     <!-- Filter button -->
                     <Button Text="Filter" FontAttributes="Bold" FontSize="Medium" BackgroundColor="LightGray"
                             Grid.Row="2" Margin="10,0,10,5" CornerRadius="15" TextColor="Black"
-                            Command="{Binding ShowFilterCommand}"/>
+                            Command="{Binding FilterBtnCommand}"/>
+
+                    <!-- Active filters -->
+                    <Label Grid.Row="3" Text="{Binding ActiveFilters}" IsVisible="{Binding ActiveFiltersVisible}"
+                           Margin="10,0,10,5" FontSize="Micro"/>
 
                 </Grid>
-
             </Frame>
-
+            
             <!-- Games collection -->
-            <StackLayout Padding="0" Grid.Row="2">
-                <!--<Label Text="No games this month!" IsVisible="False" Margin="20" FontSize="Large"
-                   HorizontalOptions="Center">
-                    <Label.Triggers>
-                        <DataTrigger TargetType="Label" Binding="{Binding Games.Count}" Value="0">
-                            <Setter Property="IsVisible" Value="True"/>
-                        </DataTrigger>
-                    </Label.Triggers>
-                </Label>-->
-                <CollectionView ItemsSource="{Binding Games}">
-                    <CollectionView.ItemsLayout>
-                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="5"/>
-                    </CollectionView.ItemsLayout>
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <StackLayout>
-                                <Frame Margin="10,0" Padding="5" BackgroundColor="White"
+            <CollectionView ItemsSource="{Binding Games}" Grid.Row="2" EmptyView="{Binding Message}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="5"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout>
+                            <Frame Margin="10,0" Padding="10,5,5,5" BackgroundColor="White"
                                        CornerRadius="10" HeightRequest="125" InputTransparent="True"
                                        IsClippedToBounds="True" HasShadow="True">
-                                    <Grid Padding="0" ColumnSpacing="10">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="85"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
+                                <Grid Padding="0" ColumnSpacing="10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="87"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
 
-                                        <Image Aspect="AspectFit">
-                                            <Image.Triggers>
-                                                <DataTrigger TargetType="Image" Binding="{Binding Position}" Value="Linesman">
-                                                    <Setter Property="Source" 
+                                    <Image Aspect="AspectFit">
+                                        <Image.Triggers>
+                                            <DataTrigger TargetType="Image" Binding="{Binding Position}" Value="Linesman">
+                                                <Setter Property="Source" 
                                                             Value="{local:ImageResourceExt GamesApp.Images.linesmanjersey.jpg}"/>
-                                                </DataTrigger>
-                                                <DataTrigger TargetType="Image" Binding="{Binding Position}" Value="Referee">
-                                                    <Setter Property="Source" 
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="Image" Binding="{Binding Position}" Value="Referee">
+                                                <Setter Property="Source" 
                                                             Value="{local:ImageResourceExt GamesApp.Images.headrefjersey.jpg}"/>
-                                                </DataTrigger>
-                                            </Image.Triggers>
-                                        </Image>
+                                            </DataTrigger>
+                                        </Image.Triggers>
+                                    </Image>
 
-                                        <StackLayout Grid.Column="1" Padding="10"
+                                    <StackLayout Grid.Column="1" Padding="10"
                                                      VerticalOptions="Center">
-                                            <Label Text="{Binding DateStr}" HorizontalTextAlignment="End"/>
-                                            <Label Text="{Binding Division}" FontAttributes="Bold" HorizontalTextAlignment="End"/>
-                                            <Label Text="{Binding Teams}" HorizontalTextAlignment="End"/>
-                                        </StackLayout>
+                                        <Label Text="{Binding DateStr}" HorizontalTextAlignment="End"/>
+                                        <Label Text="{Binding Division}" FontAttributes="Bold" HorizontalTextAlignment="End"/>
+                                        <Label Text="{Binding Teams}" HorizontalTextAlignment="End"/>
+                                    </StackLayout>
 
-                                    </Grid>
-                                </Frame>
-                            </StackLayout>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </StackLayout>
+                                </Grid>
+                            </Frame>
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
 
         </Grid>
     </ContentPage.Content>
-    
-
-    <!--
-    <StackLayout>
-        <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
-            <Label Text="Welcome to Xamarin.Forms!" HorizontalTextAlignment="Center" TextColor="White" FontSize="36"/>
-        </Frame>
-        <Label Text="Start developing now" FontSize="Title" Padding="30,10,30,10"/>
-        <Label Text="Make changes to your XAML file and save to see your UI update in the running app with XAML Hot Reload. Give it a try!" FontSize="16" Padding="30,0,30,0"/>
-        <Label FontSize="16" Padding="30,24,30,0">
-            <Label.FormattedText>
-                <FormattedString>
-                    <FormattedString.Spans>
-                        <Span Text="Learn more at "/>
-                        <Span Text="https://aka.ms/xamarin-quickstart" FontAttributes="Bold"/>
-                    </FormattedString.Spans>
-                </FormattedString>
-            </Label.FormattedText>
-        </Label>
-    </StackLayout>
-    -->
-    
 </ContentPage>
