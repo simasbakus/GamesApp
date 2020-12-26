@@ -14,7 +14,7 @@ namespace GamesApp.Models
         private bool _IsChecked { get; set; }
         public bool IsChecked
         {
-            get { return _IsChecked; }
+            get => _IsChecked;
             set 
             { 
                 _IsChecked = value; 

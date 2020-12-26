@@ -11,7 +11,7 @@ namespace GamesApp.Models
         public string DateStr { get; private set; }
         public DateTime Date
         {
-            get { return DateTime.Parse(DateStr); }
+            get => DateTime.Parse(DateStr);
             set { DateStr = value.ToString("yyyy/MM/dd HH:mm"); }
         }
         public string Teams { get; set; }

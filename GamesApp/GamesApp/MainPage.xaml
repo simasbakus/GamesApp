@@ -31,7 +31,7 @@
                     </Grid.RowDefinitions>
 
                     <!-- Info fields (month, all, games count) -->
-                    <Frame Padding="0" HasShadow="False">
+                    <Frame Padding="0" HasShadow="False" BackgroundColor="GhostWhite">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="70"/>
@@ -82,7 +82,7 @@
                     </Frame>
 
                     <!-- Filter selection frame -->
-                    <CollectionView ItemsSource="{Binding Divisions}" Grid.Row="1" BackgroundColor="White">
+                    <CollectionView ItemsSource="{Binding Divisions}" Grid.Row="1" BackgroundColor="GhostWhite">
                         <CollectionView.ItemsLayout>
                             <GridItemsLayout Orientation="Vertical" Span="2"/>
                         </CollectionView.ItemsLayout>
@@ -123,49 +123,70 @@
                 </Grid>
             </Frame>
             
+            
+            <!--Label (needed because CollectionView EmptyView property throws exceptions)-->
+            <Label Grid.Row="2" Text="{Binding Message}" IsVisible="False" HorizontalOptions="CenterAndExpand"
+                   VerticalOptions="CenterAndExpand">
+                <Label.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding Games.Count}" Value="0">
+                        <Setter Property="IsVisible" Value="True"/>
+                    </DataTrigger>
+                </Label.Triggers>
+            </Label>
+
+
             <!-- Games collection -->
-            <CollectionView ItemsSource="{Binding Games}" Grid.Row="2" EmptyView="{Binding Message}">
-                <CollectionView.ItemsLayout>
-                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="5"/>
-                </CollectionView.ItemsLayout>
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <StackLayout>
-                            <Frame Margin="10,0" Padding="10,5,5,5" BackgroundColor="White"
+            <RefreshView IsRefreshing="{Binding IsRefreshing}" Grid.Row="2" Command="{Binding RefreshCommand}"
+                         RefreshColor="Black">
+                <!--This trigger is used instead of EmptyView property, whenever List is empty it is hidden-->
+                <RefreshView.Triggers>
+                    <DataTrigger TargetType="RefreshView" Binding="{Binding Games.Count}" Value="0">
+                        <Setter Property="IsVisible" Value="False"/>
+                    </DataTrigger>
+                </RefreshView.Triggers>
+                <CollectionView ItemsSource="{Binding Games}">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="5"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <StackLayout>
+                                <Frame Margin="10,0" Padding="10,5,5,5" BackgroundColor="White"
                                        CornerRadius="10" HeightRequest="125" InputTransparent="True"
                                        IsClippedToBounds="True" HasShadow="True">
-                                <Grid Padding="0" ColumnSpacing="10">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="87"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
+                                    <Grid Padding="0" ColumnSpacing="10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="87"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
 
-                                    <Image Aspect="AspectFit">
-                                        <Image.Triggers>
-                                            <DataTrigger TargetType="Image" Binding="{Binding Position}" Value="Linesman">
-                                                <Setter Property="Source" 
+                                        <Image Aspect="AspectFit">
+                                            <Image.Triggers>
+                                                <DataTrigger TargetType="Image" Binding="{Binding Position}" Value="Linesman">
+                                                    <Setter Property="Source" 
                                                             Value="{local:ImageResourceExt GamesApp.Images.linesmanjersey.jpg}"/>
-                                            </DataTrigger>
-                                            <DataTrigger TargetType="Image" Binding="{Binding Position}" Value="Referee">
-                                                <Setter Property="Source" 
+                                                </DataTrigger>
+                                                <DataTrigger TargetType="Image" Binding="{Binding Position}" Value="Referee">
+                                                    <Setter Property="Source" 
                                                             Value="{local:ImageResourceExt GamesApp.Images.headrefjersey.jpg}"/>
-                                            </DataTrigger>
-                                        </Image.Triggers>
-                                    </Image>
+                                                </DataTrigger>
+                                            </Image.Triggers>
+                                        </Image>
 
-                                    <StackLayout Grid.Column="1" Padding="10"
+                                        <StackLayout Grid.Column="1" Padding="10"
                                                      VerticalOptions="Center">
-                                        <Label Text="{Binding DateStr}" HorizontalTextAlignment="End"/>
-                                        <Label Text="{Binding Division}" FontAttributes="Bold" HorizontalTextAlignment="End"/>
-                                        <Label Text="{Binding Teams}" HorizontalTextAlignment="End"/>
-                                    </StackLayout>
+                                            <Label Text="{Binding DateStr}" HorizontalTextAlignment="End"/>
+                                            <Label Text="{Binding Division}" FontAttributes="Bold" HorizontalTextAlignment="End"/>
+                                            <Label Text="{Binding Teams}" HorizontalTextAlignment="End"/>
+                                        </StackLayout>
 
-                                </Grid>
-                            </Frame>
-                        </StackLayout>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                                    </Grid>
+                                </Frame>
+                            </StackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
 
         </Grid>
     </ContentPage.Content>

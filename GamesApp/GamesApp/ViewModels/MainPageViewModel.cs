@@ -14,22 +14,40 @@ namespace GamesApp.ViewModels
 {
     public class MainPageViewModel : INotifyPropertyChanged
     {
-        // Test purpose --------------------------
-        Stopwatch stopwatch = new Stopwatch();
-        //----------------------------------------
+        /* ------------------ Variables ------------------ */
+        DBService dbService { get; set; }
+        public bool ShowMonth { get; set; } = false;
+        public bool ShowFilter { get; set; } = false;
+        public string CurMonthStr { get; set; }
+        public string ActiveFilters { get; set; }
+        public bool ActiveFiltersVisible { get; set; } = false;
 
-        DBService       dbService { get; set; }
-        public bool     ShowMonth { get; set; } = false;
-        public bool     ShowFilter { get; set; } = false;
-        public string   CurMonthStr { get; set; }
-        public string   ActiveFilters { get; set; }
-        public bool     ActiveFiltersVisible { get; set; } = false;
-        public string   Message { get; set; }
+        bool _IsRefreshing { get; set; }
+        public bool IsRefreshing
+        {
+            get => _IsRefreshing;
+            set
+            {
+                _IsRefreshing = value;
+                OnPropertyChanged(nameof(IsRefreshing));
+            }
+        }
 
-        private List<Game> _Games { get; set; }
+        string _Message { get; set; }
+        public string   Message
+        {
+            get => _Message;
+            set 
+            { 
+                _Message = value;
+                OnPropertyChanged(nameof(Message)); 
+            }
+        }
+
+        List<Game> _Games { get; set; }
         public List<Game> Games
         {
-            get { return _Games; }
+            get => _Games;
             set
             {
                 _Games = value;
@@ -38,6 +56,7 @@ namespace GamesApp.ViewModels
                 OnPropertyChanged(nameof(Games));
             }
         }
+
         public List<Division>   Divisions { get; set; } = new List<Division>
         {
             new Division("NLRL", false, "Lietuvos \u010Dempionatas"),
@@ -48,15 +67,23 @@ namespace GamesApp.ViewModels
             new Division("U11", false, "U11")
         };
 
+
+        /* ------------------ Commands ------------------ */
         public ICommand ShowAllCommand { get; }
         public ICommand ChangeMonthCommand { get; }
         public ICommand FilterBtnCommand { get; }
+        public ICommand RefreshCommand { get; }
+
+
+
 
         public MainPageViewModel()
         {
+            this.Games = new List<Game>();
             ShowAllCommand = new Command(async () => await ToggleShowAll());
             ChangeMonthCommand = new Command<string>(async (newMonth) => await ChangeMonth(newMonth));
             FilterBtnCommand = new Command(async () => await FilterBtnPressed());
+            RefreshCommand = new Command(async () => await ExecuteRefresh());
 
             if (Connectivity.NetworkAccess != NetworkAccess.Internet)
             {
@@ -70,18 +97,18 @@ namespace GamesApp.ViewModels
             catch (Exception e)
             {
                 Console.WriteLine("Excepetion caught: " + e.Message);
+                this.Message = "⚠️ Something went wrong! ⚠️";
             }
 
             // Get all the games, sort by Date
             try
             {
-                this.Games = dbService.GetGamesAllAsync().Result;
+                this.Games = dbService.GetAllAsync().Result;
             }
             catch (Exception e)
             {
-                this.Games = new List<Game>();
                 Console.WriteLine("Excepetion caught: " + e.Message);
-                this.Message = "Something went wrong!";
+                this.Message = "⚠️ Something went wrong! ⚠️";
             }
         }
 
@@ -93,17 +120,16 @@ namespace GamesApp.ViewModels
 
             try
             {
-                this.Games = await dbService.GetGamesByDivisionAndMonthAsync(this.ShowMonth, 0, this.Divisions);
+                this.Games = await dbService.GetByMonthOrAllAsync(this.ShowMonth, 0);
             }
             catch (Exception e)
             {
                 Console.WriteLine("Excepetion caught: " + e.Message);
-                this.Message = "Something went wrong!";
+                this.Message = "⚠️ Something went wrong! ⚠️";
             }
 
             this.CurMonthStr = dbService.CurMonth.ToString("MMM");
 
-            OnPropertyChanged(nameof(Divisions));
             OnPropertyChanged(nameof(ShowMonth));
         }
 
@@ -111,14 +137,13 @@ namespace GamesApp.ViewModels
         {
             try
             {
-                this.Games = await dbService.GetGamesByDivisionAndMonthAsync(this.ShowMonth, int.Parse(newMonth), this.Divisions);
+                this.Games = await dbService.GetByMonthOrAllAsync(this.ShowMonth, int.Parse(newMonth));
             }
             catch (Exception e)
             {
                 Console.WriteLine("Excepetion caught: " + e.Message);
-                this.Message = "Something went wrong!";
+                this.Message = "⚠️ Something went wrong! ⚠️";
             }
-
             this.CurMonthStr = dbService.CurMonth.ToString("MMM");
 
             OnPropertyChanged(nameof(CurMonthStr));
@@ -139,12 +164,12 @@ namespace GamesApp.ViewModels
 
                 try
                 {
-                    this.Games = await dbService.GetGamesByDivisionAndMonthAsync(this.ShowMonth, 0, this.Divisions);
+                    this.Games = await dbService.GetByDivisionOrAllAsync(this.Divisions);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine("Excepetion caught: " + e.Message);
-                    this.Message = "Something went wrong!";
+                    this.Message = "⚠️ Something went wrong! ⚠️";
                 }
 
 
@@ -164,6 +189,20 @@ namespace GamesApp.ViewModels
             this.ShowFilter = !this.ShowFilter;
 
             OnPropertyChanged(nameof(ShowFilter));
+        }
+
+        async Task ExecuteRefresh()
+        {
+            try
+            {
+                this.Games = await dbService.RefreshAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Excepetion caught: " + e.Message);
+                this.Message = "⚠️ Something went wrong! ⚠️";
+            }
+            this.IsRefreshing = false;
         }
 
 
