@@ -76,7 +76,6 @@ namespace GamesApp.ViewModels
 
 
 
-
         public MainPageViewModel()
         {
             this.Games = new List<Game>();
@@ -88,6 +87,7 @@ namespace GamesApp.ViewModels
             if (Connectivity.NetworkAccess != NetworkAccess.Internet)
             {
                 this.Message = "No network access!";
+                Application.Current.MainPage.DisplayAlert("Alert", "No network access!", "Ok");
             }
 
             try
@@ -204,7 +204,6 @@ namespace GamesApp.ViewModels
             }
             this.IsRefreshing = false;
         }
-
 
 
         public event PropertyChangedEventHandler PropertyChanged;

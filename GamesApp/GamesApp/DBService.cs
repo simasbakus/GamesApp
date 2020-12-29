@@ -18,8 +18,8 @@ namespace GamesApp
         public DBService()
         {
             MongoClient client;
-            client = new MongoClient(////);
-            this.DB = client.GetDatabase(//////);
+            client = new MongoClient("/////////");
+            this.DB = client.GetDatabase("/////////");
         }
 
 
@@ -76,7 +76,7 @@ namespace GamesApp
 
         private Task<List<Game>> RunQueryAsync()
         {
-            return DB.GetCollection<Game>(///////)
+            return DB.GetCollection<Game>("////////")
                         .Find(this.MonthFilter & this.DivisionFilter)
                         .Sort("{ Date: -1}")
                         .ToListAsync();

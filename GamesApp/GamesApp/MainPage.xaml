@@ -144,7 +144,8 @@
                         <Setter Property="IsVisible" Value="False"/>
                     </DataTrigger>
                 </RefreshView.Triggers>
-                <CollectionView ItemsSource="{Binding Games}">
+                <CollectionView ItemsSource="{Binding Games}" SelectionMode="Single" 
+                                SelectionChanged="CollectionView_SelectionChanged">
                     <CollectionView.ItemsLayout>
                         <LinearItemsLayout Orientation="Vertical" ItemSpacing="5"/>
                     </CollectionView.ItemsLayout>
