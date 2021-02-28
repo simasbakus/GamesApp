@@ -1,4 +1,6 @@
 ﻿using GamesApp.Models;
+using GamesApp.Services;
+using GamesApp.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -22,7 +24,6 @@ namespace GamesApp
             if (((CollectionView)sender).SelectedItem != null)
             {
                 Game selectedItem = ((CollectionView)sender).SelectedItem as Game;
-
                 await Browser.OpenAsync(selectedItem.UrlLink, BrowserLaunchMode.SystemPreferred);
 
                 ((CollectionView)sender).SelectedItem = null;

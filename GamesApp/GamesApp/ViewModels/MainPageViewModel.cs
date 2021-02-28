@@ -1,4 +1,5 @@
 ﻿using GamesApp.Models;
+using GamesApp.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,6 +8,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -15,9 +17,11 @@ namespace GamesApp.ViewModels
     public class MainPageViewModel : INotifyPropertyChanged
     {
         /* ------------------ Variables ------------------ */
-        DBService dbService { get; set; }
+        private readonly IRepositoryGames _repository = new RepositoryGames();
+
         public bool ShowMonth { get; set; } = false;
         public bool ShowFilter { get; set; } = false;
+        private DateTime CurMonth { get; set; }
         public string CurMonthStr { get; set; }
         public string ActiveFilters { get; set; }
         public bool ActiveFiltersVisible { get; set; } = false;
@@ -69,94 +73,70 @@ namespace GamesApp.ViewModels
 
 
         /* ------------------ Commands ------------------ */
-        public ICommand ShowAllCommand { get; }
-        public ICommand ChangeMonthCommand { get; }
-        public ICommand FilterBtnCommand { get; }
-        public ICommand RefreshCommand { get; }
+        public IAsyncCommand ShowAllCommand { get; }
+        public IAsyncCommand<string> ChangeMonthCommand { get; }
+        public IAsyncCommand FilterBtnCommand { get; }
+        public IAsyncCommand RefreshCommand { get; }
 
 
 
         public MainPageViewModel()
         {
-            this.Games = new List<Game>();
-            ShowAllCommand = new Command(async () => await ToggleShowAll());
-            ChangeMonthCommand = new Command<string>(async (newMonth) => await ChangeMonth(newMonth));
-            FilterBtnCommand = new Command(async () => await FilterBtnPressed());
-            RefreshCommand = new Command(async () => await ExecuteRefresh());
-
-            if (Connectivity.NetworkAccess != NetworkAccess.Internet)
-            {
-                this.Message = "No network access!";
-                Application.Current.MainPage.DisplayAlert("Alert", "No network access!", "Ok");
-            }
-
-            try
-            {
-                this.dbService = new DBService();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Excepetion caught: " + e.Message);
-                this.Message = "⚠️ Something went wrong! ⚠️";
-            }
-
-            // Get all the games, sort by Date
-            try
-            {
-                this.Games = dbService.GetAllAsync().Result;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Excepetion caught: " + e.Message);
-                this.Message = "⚠️ Something went wrong! ⚠️";
-            }
+            Games = new List<Game>();
+            ShowAllCommand = new AsyncCommand(ToggleShowAll, allowsMultipleExecutions: false);
+            ChangeMonthCommand = new AsyncCommand<string>((newMonth) => ChangeMonth(newMonth), allowsMultipleExecutions: false);
+            FilterBtnCommand = new AsyncCommand(FilterBtnPressed, allowsMultipleExecutions: false);
+            RefreshCommand = new AsyncCommand(ExecuteRefresh, allowsMultipleExecutions: false);
         }
 
         async Task ToggleShowAll()
         {
-            this.ShowMonth = !this.ShowMonth;
-
-            dbService.CurMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-
+            ShowMonth = !ShowMonth;
+            CurMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            CurMonthStr = CurMonth.ToString("MMM");
+            
             try
             {
-                this.Games = await dbService.GetByMonthOrAllAsync(this.ShowMonth, 0);
+                if (ShowMonth)
+                    Games = await _repository.GetMonthGames(CurMonth.ToString("yyyy-MM"), Divisions);
+                else
+                    Games = await _repository.GetGames(Divisions);
             }
             catch (Exception e)
             {
                 Console.WriteLine("Excepetion caught: " + e.Message);
-                this.Message = "⚠️ Something went wrong! ⚠️";
+                Message = "⚠️ Something went wrong! ⚠️";
             }
-
-            this.CurMonthStr = dbService.CurMonth.ToString("MMM");
 
             OnPropertyChanged(nameof(ShowMonth));
         }
 
         async Task ChangeMonth(string newMonth)
         {
+            CurMonth = CurMonth.AddMonths(int.Parse(newMonth));
+            CurMonthStr = CurMonth.ToString("MMM");
+
             try
             {
-                this.Games = await dbService.GetByMonthOrAllAsync(this.ShowMonth, int.Parse(newMonth));
+                Games = await _repository.GetMonthGames(CurMonth.ToString("yyyy-MM"), Divisions);
             }
             catch (Exception e)
             {
                 Console.WriteLine("Excepetion caught: " + e.Message);
-                this.Message = "⚠️ Something went wrong! ⚠️";
+                Message = "⚠️ Something went wrong! ⚠️";
             }
-            this.CurMonthStr = dbService.CurMonth.ToString("MMM");
 
             OnPropertyChanged(nameof(CurMonthStr));
         }
 
         async Task FilterBtnPressed()
         {
-            if (this.ShowFilter == true)
+            if (ShowFilter == true)
             {
-                if (this.Divisions.Find(d => d.IsChecked == false) == null)
+                if (Divisions.Find(d => d.IsChecked == false) == null)
                 {
                     //Check if all filter options ar checked, if so - all values are reset to initial ones
-                    foreach (Division division in this.Divisions)
+                    foreach (Division division in Divisions)
                     {
                         division.IsChecked = false;
                     }
@@ -164,29 +144,32 @@ namespace GamesApp.ViewModels
 
                 try
                 {
-                    this.Games = await dbService.GetByDivisionOrAllAsync(this.Divisions);
+                    if (ShowMonth)
+                        Games = await _repository.GetMonthGames(CurMonth.ToString("yyyy-MM"), Divisions);
+                    else
+                        Games = await _repository.GetGames(Divisions);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine("Excepetion caught: " + e.Message);
-                    this.Message = "⚠️ Something went wrong! ⚠️";
+                    Message = "⚠️ Something went wrong! ⚠️";
                 }
 
 
 
                 // Resets active ilters string
-                this.ActiveFilters = "Active filters: ";
-                foreach (Division division in this.Divisions.FindAll(d => d.IsChecked == true))
+                ActiveFilters = "Active filters: ";
+                foreach (Division division in Divisions.FindAll(d => d.IsChecked == true))
                 {
-                    this.ActiveFilters = this.ActiveFilters + division.Label + " | ";
+                    ActiveFilters = ActiveFilters + division.Label + " | ";
                 }
 
-                this.ActiveFiltersVisible = this.Divisions.Find(d => d.IsChecked == true) != null;
+                ActiveFiltersVisible = Divisions.Find(d => d.IsChecked == true) != null;
 
                 OnPropertyChanged(nameof(ActiveFilters));
                 OnPropertyChanged(nameof(ActiveFiltersVisible));
             }
-            this.ShowFilter = !this.ShowFilter;
+            ShowFilter = !ShowFilter;
 
             OnPropertyChanged(nameof(ShowFilter));
         }
@@ -195,14 +178,17 @@ namespace GamesApp.ViewModels
         {
             try
             {
-                this.Games = await dbService.RefreshAsync();
+                if (ShowMonth)
+                    Games = await _repository.GetMonthGames(CurMonth.ToString("yyyy-MM"), Divisions);
+                else
+                    Games = await _repository.GetGames(Divisions);
             }
             catch (Exception e)
             {
                 Console.WriteLine("Excepetion caught: " + e.Message);
-                this.Message = "⚠️ Something went wrong! ⚠️";
+                Message = "⚠️ Something went wrong! ⚠️";
             }
-            this.IsRefreshing = false;
+            IsRefreshing = false;
         }
 
 

@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <SelectedDevice>IPhone Xs iOS 14.2</SelectedDevice>
-    <DefaultDevice>IPhone Xs iOS 14.2</DefaultDevice>
+    <SelectedDevice>iPhone Xs iOS 14.4</SelectedDevice>
+    <DefaultDevice>iPhone Xs iOS 14.4</DefaultDevice>
     <TargetiOSDevice>&lt;%3fxml version="1.0" encoding="UTF-8"%3f&gt;
 &lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;
 &lt;plist version="1.0"&gt;
@@ -14,14 +14,15 @@
 		&lt;key&gt;model&lt;/key&gt;
 		&lt;string&gt;iPhone11,2&lt;/string&gt;
 		&lt;key&gt;os-version&lt;/key&gt;
-		&lt;string&gt;14.2&lt;/string&gt;
+		&lt;string&gt;14.4&lt;/string&gt;
 		&lt;key&gt;os&lt;/key&gt;
 		&lt;string&gt;iOS&lt;/string&gt;
 	&lt;/dict&gt;
 &lt;/dict&gt;
 &lt;/plist&gt;
 </TargetiOSDevice>
-    <DeveloperId />
-    <DevelopmentTeamId />
+    <DeveloperId>simas.bakus%40outlook.com</DeveloperId>
+    <DevelopmentTeamId>B2P8ZR9KZZ</DevelopmentTeamId>
+    <HasIOSDesignerOverlayBeenDismissed>True</HasIOSDesignerOverlayBeenDismissed>
   </PropertyGroup>
 </Project>

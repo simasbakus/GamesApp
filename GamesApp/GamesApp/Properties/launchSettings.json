@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "GamesApp": {
+      "commandName": "Project",
+      "remoteDebugEnabled": false
+    }
+  }
+}

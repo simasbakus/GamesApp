@@ -7,16 +7,8 @@ namespace GamesApp.Models
 {
     public class Game
     {
-        private int _Id { get; set; }
-        public int Id
-        {
-            get => _Id;
-            set
-            {
-                _Id = value;
-                UrlLink = "http://m.hockey.lt/#/rezultatai/rungtynes/" + _Id.ToString();
-            }
-        }
+        private int Id { get; set; }
+        public string UrlLink { get; set; }
         public string DateStr { get; private set; }
         public DateTime Date
         {
@@ -26,6 +18,5 @@ namespace GamesApp.Models
         public string Teams { get; set; }
         public string Division { get; set; }
         public string Position { get; set; }
-        public string UrlLink { get; set; }
     }
 }

@@ -42,9 +42,17 @@
       "frameworks": {
         "xamarinios10": {
           "dependencies": {
-            "MongoDB.Driver": {
+            "Autofac": {
               "target": "Package",
-              "version": "[2.10.0, )"
+              "version": "[6.1.0, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[12.0.3, )"
+            },
+            "Xamarin.CommunityToolkit": {
+              "target": "Package",
+              "version": "[1.0.3, )"
             },
             "Xamarin.Essentials": {
               "target": "Package",
@@ -52,7 +60,7 @@
             },
             "Xamarin.Forms": {
               "target": "Package",
-              "version": "[4.8.0.1687, )"
+              "version": "[5.0.0.2012, )"
             }
           }
         }
@@ -109,9 +117,9 @@
         "netstandard2.0": {
           "targetAlias": "netstandard2.0",
           "dependencies": {
-            "MongoDB.Driver": {
+            "Autofac": {
               "target": "Package",
-              "version": "[2.10.0, )"
+              "version": "[6.1.0, )"
             },
             "NETStandard.Library": {
               "suppressParent": "All",
@@ -119,13 +127,21 @@
               "version": "[2.0.3, )",
               "autoReferenced": true
             },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[12.0.3, )"
+            },
+            "Xamarin.CommunityToolkit": {
+              "target": "Package",
+              "version": "[1.0.3, )"
+            },
             "Xamarin.Essentials": {
               "target": "Package",
               "version": "[1.5.3.2, )"
             },
             "Xamarin.Forms": {
               "target": "Package",
-              "version": "[4.8.0.1687, )"
+              "version": "[5.0.0.2012, )"
             }
           },
           "imports": [
@@ -138,7 +154,7 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.103\\RuntimeIdentifierGraph.json"
         }
       }
     }

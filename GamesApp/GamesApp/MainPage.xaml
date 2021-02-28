@@ -55,7 +55,7 @@
                             <StackLayout Grid.Column="1" Orientation="Horizontal" HorizontalOptions="Center">
                                 <Button Text="←" FontAttributes="Bold" FontSize="30" IsVisible="{Binding ShowMonth}"
                                         Command="{Binding ChangeMonthCommand}" CommandParameter="-1"
-                                        TextColor="Black"/>
+                                        TextColor="Black" Padding="30,0,0,0"/>
                                 <Label FontSize="35" VerticalOptions="Center" HorizontalOptions="Center"
                                         FontAttributes="Bold">
                                     <Label.Triggers>
@@ -69,7 +69,7 @@
                                 </Label>
                                 <Button Text="→" FontAttributes="Bold" FontSize="30" IsVisible="{Binding ShowMonth}"
                                         Command="{Binding ChangeMonthCommand}" CommandParameter="1"
-                                        TextColor="Black"/>
+                                        TextColor="Black" Padding="0,0,30,0"/>
                             </StackLayout>
 
                             <StackLayout Grid.Column="2" VerticalOptions="Center" HorizontalOptions="End"
