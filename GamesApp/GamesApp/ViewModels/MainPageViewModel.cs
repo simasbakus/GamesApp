@@ -17,7 +17,7 @@ namespace GamesApp.ViewModels
     public class MainPageViewModel : INotifyPropertyChanged
     {
         /* ------------------ Variables ------------------ */
-        private readonly IRepositoryGames _repository = new RepositoryGames();
+        private readonly IRepositoryGames _repository;
 
         public bool ShowMonth { get; set; } = false;
         public bool ShowFilter { get; set; } = false;
@@ -80,8 +80,9 @@ namespace GamesApp.ViewModels
 
 
 
-        public MainPageViewModel()
+        public MainPageViewModel(IRepositoryGames repository)
         {
+            _repository = repository;
             Games = new List<Game>();
             ShowAllCommand = new AsyncCommand(ToggleShowAll, allowsMultipleExecutions: false);
             ChangeMonthCommand = new AsyncCommand<string>((newMonth) => ChangeMonth(newMonth), allowsMultipleExecutions: false);

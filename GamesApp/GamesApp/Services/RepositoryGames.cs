@@ -8,7 +8,12 @@ namespace GamesApp.Services
 {
     class RepositoryGames : IRepositoryGames
     {
-        private readonly IHttpService _httpService = new HttpService();
+        private readonly IHttpService _httpService;
+
+        public RepositoryGames(IHttpService httpService)
+        {
+            _httpService = httpService;
+        }
 
         public async Task<List<Game>> GetGames(List<Division> divisions)
         {

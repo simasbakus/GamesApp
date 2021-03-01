@@ -5,9 +5,6 @@
              xmlns:viewmodel="clr-namespace:GamesApp.ViewModels"
              x:Class="GamesApp.MainPage"
              BackgroundColor="White">
-    <ContentPage.BindingContext>
-        <viewmodel:MainPageViewModel/>
-    </ContentPage.BindingContext>
     <ContentPage.Content>
         <Grid RowSpacing="0">
             <Grid.RowDefinitions>

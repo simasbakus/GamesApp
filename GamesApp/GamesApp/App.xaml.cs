@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GamesApp.Services;
+using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -9,6 +10,8 @@ namespace GamesApp
         public App()
         {
             InitializeComponent();
+
+            DIContainer.RegisterDependencies();
 
             MainPage = new MainPage();
         }

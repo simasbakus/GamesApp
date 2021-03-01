@@ -17,6 +17,8 @@ namespace GamesApp
         public MainPage()
         {
             InitializeComponent();
+
+            BindingContext = DIContainer.Resolve<MainPageViewModel>();
         }
 
         private async void CollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)
