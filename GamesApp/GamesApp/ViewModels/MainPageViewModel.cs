@@ -88,6 +88,8 @@ namespace GamesApp.ViewModels
             ChangeMonthCommand = new AsyncCommand<string>((newMonth) => ChangeMonth(newMonth), allowsMultipleExecutions: false);
             FilterBtnCommand = new AsyncCommand(FilterBtnPressed, allowsMultipleExecutions: false);
             RefreshCommand = new AsyncCommand(ExecuteRefresh, allowsMultipleExecutions: false);
+
+            LoadInitialData();
         }
 
         async Task ToggleShowAll()
@@ -190,6 +192,11 @@ namespace GamesApp.ViewModels
                 Message = "⚠️ Something went wrong! ⚠️";
             }
             IsRefreshing = false;
+        }
+
+        private async void LoadInitialData()
+        {
+            Games = await _repository.GetGames(Divisions);
         }
 
 

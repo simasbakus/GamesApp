@@ -20,7 +20,7 @@ namespace GamesApp.Services
             PasswordIV = "mVKqOY76FY+QDz+22hKvYA=="
         };
 
-        private string Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjYwMjc4MGQyNjE0NTQ0YTc2NGI5MzY1NSIsIm5iZiI6MTYxNDQwNTQ2NiwiZXhwIjoxNjE0NTc4MjY2LCJpYXQiOjE2MTQ0MDU0NjZ9.A4VyNpGXxOc-UPhqI6IaLqXBnJJTm5qDSYykVFlsLAw";
+        private string Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjYwMjc4MGQyNjE0NTQ0YTc2NGI5MzY1NSIsIm5iZiI6MTYxNDYxNjUyMSwiZXhwIjoxNjE1ODI2MTIxLCJpYXQiOjE2MTQ2MTY1MjF9.8ApLMvw6A2SPhbcUhO98LFuBbAp-Mjmqseln1WfqazM";
 
         private readonly HttpClient _httpClient = new HttpClient();
 
