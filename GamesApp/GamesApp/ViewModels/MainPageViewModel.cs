@@ -1,4 +1,5 @@
-﻿using GamesApp.Models;
+﻿using Akavache;
+using GamesApp.Models;
 using GamesApp.Services;
 using System;
 using System.Collections.Generic;
@@ -71,12 +72,12 @@ namespace GamesApp.ViewModels
             new Division("U11", false, "U11")
         };
 
-
         /* ------------------ Commands ------------------ */
         public IAsyncCommand ShowAllCommand { get; }
         public IAsyncCommand<string> ChangeMonthCommand { get; }
         public IAsyncCommand FilterBtnCommand { get; }
         public IAsyncCommand RefreshCommand { get; }
+        public IAsyncCommand LoadDataCommand { get; }
 
 
 
@@ -88,11 +89,11 @@ namespace GamesApp.ViewModels
             ChangeMonthCommand = new AsyncCommand<string>((newMonth) => ChangeMonth(newMonth), allowsMultipleExecutions: false);
             FilterBtnCommand = new AsyncCommand(FilterBtnPressed, allowsMultipleExecutions: false);
             RefreshCommand = new AsyncCommand(ExecuteRefresh, allowsMultipleExecutions: false);
+            LoadDataCommand = new AsyncCommand(LoadInitialData, allowsMultipleExecutions: false);
 
-            LoadInitialData();
         }
 
-        async Task ToggleShowAll()
+        private async Task ToggleShowAll()
         {
             ShowMonth = !ShowMonth;
             CurMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
@@ -114,7 +115,7 @@ namespace GamesApp.ViewModels
             OnPropertyChanged(nameof(ShowMonth));
         }
 
-        async Task ChangeMonth(string newMonth)
+        private async Task ChangeMonth(string newMonth)
         {
             CurMonth = CurMonth.AddMonths(int.Parse(newMonth));
             CurMonthStr = CurMonth.ToString("MMM");
@@ -132,7 +133,7 @@ namespace GamesApp.ViewModels
             OnPropertyChanged(nameof(CurMonthStr));
         }
 
-        async Task FilterBtnPressed()
+        private async Task FilterBtnPressed()
         {
             if (ShowFilter == true)
             {
@@ -177,7 +178,7 @@ namespace GamesApp.ViewModels
             OnPropertyChanged(nameof(ShowFilter));
         }
 
-        async Task ExecuteRefresh()
+        private async Task ExecuteRefresh()
         {
             try
             {
@@ -194,9 +195,17 @@ namespace GamesApp.ViewModels
             IsRefreshing = false;
         }
 
-        private async void LoadInitialData()
+        private async Task LoadInitialData()
         {
-            Games = await _repository.GetGames(Divisions);
+            try
+            {
+                Games = await _repository.GetGames(Divisions);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Excepetion caught: " + e.Message);
+                Message = "⚠️ Something went wrong! ⚠️";
+            }
         }
 
 

@@ -14,11 +14,12 @@ namespace GamesApp
 {
     public partial class MainPage : ContentPage
     {
+        private readonly MainPageViewModel _viewModel;
         public MainPage()
         {
             InitializeComponent();
 
-            BindingContext = DIContainer.Resolve<MainPageViewModel>();
+            BindingContext = _viewModel = DIContainer.Resolve<MainPageViewModel>();
         }
 
         private async void CollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -30,6 +31,14 @@ namespace GamesApp
 
                 ((CollectionView)sender).SelectedItem = null;
             }
+        }
+
+        protected override void OnAppearing()
+        {
+            if (_viewModel.LoadDataCommand.CanExecute(null))
+                _viewModel.LoadDataCommand.Execute(null);
+
+            base.OnAppearing();
         }
 
     }

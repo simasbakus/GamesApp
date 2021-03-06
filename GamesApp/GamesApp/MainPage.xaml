@@ -136,6 +136,7 @@
             <RefreshView IsRefreshing="{Binding IsRefreshing}" Grid.Row="2" Command="{Binding RefreshCommand}"
                          RefreshColor="Black">
                 <!--This trigger is used instead of EmptyView property, whenever List is empty it is hidden-->
+                <!--Currently Bugs, March game is not displayed properly-->
                 <RefreshView.Triggers>
                     <DataTrigger TargetType="RefreshView" Binding="{Binding Games.Count}" Value="0">
                         <Setter Property="IsVisible" Value="False"/>

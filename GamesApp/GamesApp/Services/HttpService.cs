@@ -20,6 +20,7 @@ namespace GamesApp.Services
             PasswordIV = "mVKqOY76FY+QDz+22hKvYA=="
         };
 
+        //Valid untill 03-15 18:35
         private string Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjYwMjc4MGQyNjE0NTQ0YTc2NGI5MzY1NSIsIm5iZiI6MTYxNDYxNjUyMSwiZXhwIjoxNjE1ODI2MTIxLCJpYXQiOjE2MTQ2MTY1MjF9.8ApLMvw6A2SPhbcUhO98LFuBbAp-Mjmqseln1WfqazM";
 
         private readonly HttpClient _httpClient = new HttpClient();
@@ -31,7 +32,7 @@ namespace GamesApp.Services
 
         public async Task<List<Game>> GetGames(string divisions = "")
         {
-            if (Token == "")
+            if (await CheckToken() == false)
                 await GetToken();
 
             UriBuilder path = new UriBuilder()
@@ -60,7 +61,7 @@ namespace GamesApp.Services
 
         public async Task<List<Game>> GetMonthGames(string date, string divisions = "")
         {
-            if (Token == "")
+            if (await CheckToken() == false)
                 await GetToken();
 
             UriBuilder path = new UriBuilder()
@@ -85,11 +86,25 @@ namespace GamesApp.Services
             return null;
         }
 
-        private async Task GetToken()
+        public async Task<bool> CheckToken()
+        {
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "Authenticate");
+            //Instead of geting from var get from cache
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+
+            HttpResponseMessage response = await _httpClient.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+                return true;
+
+            return false;
+        }
+
+        public async Task GetToken()
         {
             string serializedUserCred = JsonConvert.SerializeObject(UserCred);
 
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "Games/Authenticate")
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "Authenticate")
             {
                 Content = new StringContent(serializedUserCred)
             };
@@ -99,7 +114,10 @@ namespace GamesApp.Services
             HttpResponseMessage response = await _httpClient.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
+            {
+                // Instead of var set token to cache
                 Token = await response.Content.ReadAsStringAsync();
+            }
         }
     }
 }

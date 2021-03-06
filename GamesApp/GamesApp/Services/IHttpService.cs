@@ -10,5 +10,7 @@ namespace GamesApp.Services
     {
         Task<List<Game>> GetGames(string divisions = "");
         Task<List<Game>> GetMonthGames(string date, string divisions = "");
+        Task<bool> CheckToken();
+        Task GetToken();
     }
 }
