@@ -20,9 +20,6 @@ namespace GamesApp.Services
             PasswordIV = "mVKqOY76FY+QDz+22hKvYA=="
         };
 
-        //Valid untill 03-15 18:35
-        private string Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6IjYwMjc4MGQyNjE0NTQ0YTc2NGI5MzY1NSIsIm5iZiI6MTYxNDYxNjUyMSwiZXhwIjoxNjE1ODI2MTIxLCJpYXQiOjE2MTQ2MTY1MjF9.8ApLMvw6A2SPhbcUhO98LFuBbAp-Mjmqseln1WfqazM";
-
         private readonly HttpClient _httpClient = new HttpClient();
 
         public HttpService()
@@ -30,11 +27,8 @@ namespace GamesApp.Services
             _httpClient.BaseAddress = new Uri("https://hockeygamesapi.azurewebsites.net");
         }
 
-        public async Task<List<Game>> GetGames(string divisions = "")
+        public async Task<List<Game>> GetGames(string token, string divisions = "")
         {
-            if (await CheckToken() == false)
-                await GetToken();
-
             UriBuilder path = new UriBuilder()
             {
                 Scheme = "",
@@ -44,7 +38,7 @@ namespace GamesApp.Services
             };
 
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, path.ToString());
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             HttpResponseMessage response = await _httpClient.SendAsync(request);
 
@@ -59,11 +53,8 @@ namespace GamesApp.Services
             return null;
         }
 
-        public async Task<List<Game>> GetMonthGames(string date, string divisions = "")
+        public async Task<List<Game>> GetMonthGames(string token, string date, string divisions = "")
         {
-            if (await CheckToken() == false)
-                await GetToken();
-
             UriBuilder path = new UriBuilder()
             {
                 Scheme = "",
@@ -73,7 +64,7 @@ namespace GamesApp.Services
             };
 
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, path.ToString());
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             HttpResponseMessage response = await _httpClient.SendAsync(request);
 
@@ -86,11 +77,11 @@ namespace GamesApp.Services
             return null;
         }
 
-        public async Task<bool> CheckToken()
+        public async Task<bool> CheckToken(string token)
         {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "Authenticate");
             //Instead of geting from var get from cache
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             HttpResponseMessage response = await _httpClient.SendAsync(request);
 
@@ -100,7 +91,7 @@ namespace GamesApp.Services
             return false;
         }
 
-        public async Task GetToken()
+        public async Task<string> GetToken()
         {
             string serializedUserCred = JsonConvert.SerializeObject(UserCred);
 
@@ -116,8 +107,10 @@ namespace GamesApp.Services
             if (response.IsSuccessStatusCode)
             {
                 // Instead of var set token to cache
-                Token = await response.Content.ReadAsStringAsync();
+                return await response.Content.ReadAsStringAsync();
             }
+
+            return null;
         }
     }
 }

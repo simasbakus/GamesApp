@@ -78,6 +78,7 @@ namespace GamesApp.ViewModels
         public IAsyncCommand FilterBtnCommand { get; }
         public IAsyncCommand RefreshCommand { get; }
         public IAsyncCommand LoadDataCommand { get; }
+        public IAsyncCommand CheckTokenCommand { get; }
 
 
 
@@ -90,6 +91,7 @@ namespace GamesApp.ViewModels
             FilterBtnCommand = new AsyncCommand(FilterBtnPressed, allowsMultipleExecutions: false);
             RefreshCommand = new AsyncCommand(ExecuteRefresh, allowsMultipleExecutions: false);
             LoadDataCommand = new AsyncCommand(LoadInitialData, allowsMultipleExecutions: false);
+            CheckTokenCommand = new AsyncCommand(CheckToken, allowsMultipleExecutions: false);
 
         }
 
@@ -208,6 +210,10 @@ namespace GamesApp.ViewModels
             }
         }
 
+        private async Task CheckToken()
+        {
+            await _repository.CheckAuthentication();
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

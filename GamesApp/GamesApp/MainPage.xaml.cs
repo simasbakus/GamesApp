@@ -20,6 +20,9 @@ namespace GamesApp
             InitializeComponent();
 
             BindingContext = _viewModel = DIContainer.Resolve<MainPageViewModel>();
+
+            if (_viewModel.CheckTokenCommand.CanExecute(null))
+                _viewModel.CheckTokenCommand.Execute(null);
         }
 
         private async void CollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)

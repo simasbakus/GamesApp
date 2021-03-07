@@ -8,9 +8,9 @@ namespace GamesApp.Services
 {
     public interface IHttpService
     {
-        Task<List<Game>> GetGames(string divisions = "");
-        Task<List<Game>> GetMonthGames(string date, string divisions = "");
-        Task<bool> CheckToken();
-        Task GetToken();
+        Task<List<Game>> GetGames(string token, string divisions = "");
+        Task<List<Game>> GetMonthGames(string token, string date, string divisions = "");
+        Task<bool> CheckToken(string token);
+        Task<string> GetToken();
     }
 }
