@@ -69,7 +69,7 @@ namespace GamesApp.ViewModels
             new Division("U18", false, "Jaunimo lyga"),
             new Division("U15", false, "U15"),
             new Division("U13", false, "U13"),
-            new Division("U11", false, "U11")
+            new Division("U11", false, "U11 A, U11 B")
         };
 
         /* ------------------ Commands ------------------ */
