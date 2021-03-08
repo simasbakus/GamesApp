@@ -197,7 +197,7 @@ namespace GamesApp.ViewModels
             IsRefreshing = false;
         }
 
-        private async Task LoadInitialData()
+        public async Task LoadInitialData()
         {
             try
             {

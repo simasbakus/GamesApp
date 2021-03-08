@@ -13,6 +13,8 @@ namespace GamesApp
 
             DIContainer.RegisterDependencies();
 
+            Akavache.Registrations.Start("GamesApp");
+
             MainPage = new MainPage();
         }
 

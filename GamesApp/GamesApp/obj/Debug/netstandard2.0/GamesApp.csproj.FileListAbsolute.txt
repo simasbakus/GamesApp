@@ -11,4 +11,3 @@ C:\Users\simas\OneDrive\Documents\Programavimas\GamesApp\GamesApp\GamesApp\obj\D
 C:\Users\simas\OneDrive\Documents\Programavimas\GamesApp\GamesApp\GamesApp\obj\Debug\netstandard2.0\GamesApp.dll
 C:\Users\simas\OneDrive\Documents\Programavimas\GamesApp\GamesApp\GamesApp\obj\Debug\netstandard2.0\ref\GamesApp.dll
 C:\Users\simas\OneDrive\Documents\Programavimas\GamesApp\GamesApp\GamesApp\obj\Debug\netstandard2.0\GamesApp.pdb
-C:\Users\simas\OneDrive\Documents\Programavimas\GamesApp\GamesApp\GamesApp\obj\Debug\netstandard2.0\GamesApp.csprojAssemblyReference.cache

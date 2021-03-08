@@ -106,10 +106,9 @@ namespace GamesApp.Services
 
             if (response.IsSuccessStatusCode)
             {
-                // Instead of var set token to cache
-                return await response.Content.ReadAsStringAsync();
-            }
-
+                var test = await response.Content.ReadAsStringAsync();
+                return test;
+            }        
             return null;
         }
     }

@@ -21,8 +21,6 @@ namespace GamesApp
 
             BindingContext = _viewModel = DIContainer.Resolve<MainPageViewModel>();
 
-            if (_viewModel.CheckTokenCommand.CanExecute(null))
-                _viewModel.CheckTokenCommand.Execute(null);
         }
 
         private async void CollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -36,8 +34,12 @@ namespace GamesApp
             }
         }
 
+
         protected override void OnAppearing()
         {
+            if (_viewModel.CheckTokenCommand.CanExecute(null))
+                _viewModel.CheckTokenCommand.Execute(null);
+
             if (_viewModel.LoadDataCommand.CanExecute(null))
                 _viewModel.LoadDataCommand.Execute(null);
 

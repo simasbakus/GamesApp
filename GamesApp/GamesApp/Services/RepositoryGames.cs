@@ -2,7 +2,9 @@
 using GamesApp.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reactive.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,16 +36,17 @@ namespace GamesApp.Services
             if (result != null)
                 return result;
 
-            // if results from API where null check Token and re-call the procedure
+            // if results from API where null check Token and try again
             await CheckAuthentication();
-            return await GetGames(divisions);
+            if (divisionsQuery != "")
+                return await _httpService.GetGames(token, divisionsQuery);
+            
+            return await _httpService.GetGames(token);
         }
 
         public async Task<List<Game>> GetMonthGames(string date, List<Division> divisions)
         {
             string divisionsQuery = GetDivisionsQuery(divisions);
-
-            await CheckAuthentication();
 
             string token = await GetFromCache<string>("token");
 
@@ -56,9 +59,12 @@ namespace GamesApp.Services
             if (result != null)
                 return result;
 
-            // if results from API where null check Token and re-call the procedure
+            // if results from API where null check Token and try again
             await CheckAuthentication();
-            return await GetMonthGames(date, divisions);
+            if (divisionsQuery != "")
+                return await _httpService.GetMonthGames(token, date, divisionsQuery);
+            
+            return await _httpService.GetMonthGames(token, date);
         }
 
         public async Task CheckAuthentication()
