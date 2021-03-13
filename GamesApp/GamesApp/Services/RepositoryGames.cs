@@ -21,20 +21,24 @@ namespace GamesApp.Services
             _cache = BlobCache.LocalMachine;
         }
 
-        public async Task<List<Game>> GetGames(List<Division> divisions)
+        public async Task<List<Game>> GetGames(List<Division> divisions, bool forceRefresh = false)
         {
             List<Game> games;
             
             string divisionsQuery = GetDivisionsQuery(divisions);
 
             // if no division filters are active try get games from cache
-            if (divisionsQuery == "")
+            if (divisionsQuery == "" && !forceRefresh)
             {
                 games = await GetFromCache<List<Game>>("games");
 
                 if (games != null)
                     return games;
             }
+
+            // ignore and remove cached games if method called with forceRefresh: true
+            if (forceRefresh)
+                await _cache.InvalidateAllObjects<List<Game>>();
 
             string token = await GetFromCache<string>("token");
 
@@ -56,20 +60,24 @@ namespace GamesApp.Services
             return games;
         }
 
-        public async Task<List<Game>> GetMonthGames(string date, List<Division> divisions)
+        public async Task<List<Game>> GetMonthGames(string date, List<Division> divisions, bool forceRefresh = false)
         {
             List<Game> games;
 
             string divisionsQuery = GetDivisionsQuery(divisions);
 
             // if no division filters are active try get games from cache
-            if (divisionsQuery == "")
+            if (divisionsQuery == "" && !forceRefresh)
             {
                 games = await GetFromCache<List<Game>>($"games{date}");
 
                 if (games != null)
                     return games;
             }
+
+            // ignore and remove cached games if method called with forceRefresh: true
+            if (forceRefresh)
+                await _cache.InvalidateAllObjects<List<Game>>();
 
             string token = await GetFromCache<string>("token");
 

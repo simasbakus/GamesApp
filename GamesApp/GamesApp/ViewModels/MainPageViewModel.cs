@@ -191,10 +191,11 @@ namespace GamesApp.ViewModels
 
             try
             {
+                // pass forceRefresh: true to ignore cached games and fetch data from API
                 if (ShowMonth)
-                    Games = await _repository.GetMonthGames(CurMonth.ToString("yyyy-MM"), Divisions);
+                    Games = await _repository.GetMonthGames(CurMonth.ToString("yyyy-MM"), Divisions, forceRefresh: true);
                 else
-                    Games = await _repository.GetGames(Divisions);
+                    Games = await _repository.GetGames(Divisions, forceRefresh: true);
             }
             catch (Exception e)
             {
