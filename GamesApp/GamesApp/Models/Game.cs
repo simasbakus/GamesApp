@@ -11,10 +11,15 @@ namespace GamesApp.Models
         private int Id { get; set; }
         public string UrlLink { get; set; }
         public string DateStr { get; set; }
+        private DateTime _Date { get; set; }
         public DateTime Date
         {
-            get => DateTime.Parse(DateStr);
-            set { DateStr = value.ToString("yyyy/MM/dd HH:mm"); }
+            get => _Date;
+            set 
+            { 
+                DateStr = value.ToString("yyyy/MM/dd HH:mm");
+                _Date = value;
+            }
         }
         public string Teams { get; set; }
         public string Division { get; set; }
