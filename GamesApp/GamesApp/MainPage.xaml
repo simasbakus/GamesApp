@@ -2,7 +2,6 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:GamesApp"
-             xmlns:viewmodel="clr-namespace:GamesApp.ViewModels"
              x:Class="GamesApp.MainPage"
              BackgroundColor="White">
     <ContentPage.Content>
@@ -98,11 +97,11 @@
                                     <StackLayout.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleIsChecked}"/>
                                     </StackLayout.GestureRecognizers>
-                                    
+
                                     <CheckBox VerticalOptions="Center" IsChecked="{Binding IsChecked}" Margin="30,0,20,0"/>
                                     <Label Text="{Binding Label}" VerticalOptions="Center"/>
                                 </StackLayout>
-                                
+
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
@@ -119,31 +118,25 @@
 
                 </Grid>
             </Frame>
-            
-            
-            <!--Label (needed because CollectionView EmptyView property throws exceptions)-->
-            <Label Grid.Row="2" Text="{Binding Message}" IsVisible="False" HorizontalOptions="CenterAndExpand"
-                   VerticalOptions="CenterAndExpand">
-                <Label.Triggers>
-                    <DataTrigger TargetType="Label" Binding="{Binding Games.Count}" Value="0">
-                        <Setter Property="IsVisible" Value="True"/>
-                    </DataTrigger>
-                </Label.Triggers>
-            </Label>
-
 
             <!-- Games collection -->
             <RefreshView IsRefreshing="{Binding IsRefreshing}" Grid.Row="2" Command="{Binding RefreshCommand}"
-                         RefreshColor="Black">
-                <!--This trigger is used instead of EmptyView property, whenever List is empty it is hidden-->
-                <!--Currently Bugs, March game is not displayed properly-->
-                <RefreshView.Triggers>
-                    <DataTrigger TargetType="RefreshView" Binding="{Binding Games.Count}" Value="0">
-                        <Setter Property="IsVisible" Value="False"/>
-                    </DataTrigger>
-                </RefreshView.Triggers>
+                         RefreshColor="Black" >
                 <CollectionView ItemsSource="{Binding Games}" SelectionMode="Single" 
                                 SelectionChanged="CollectionView_SelectionChanged">
+                    <CollectionView.EmptyView>
+                        <!--Show empty view text only if the data is finished being fetched-->
+                        <ContentView>
+                            <Label Text="No games found!" HorizontalOptions="CenterAndExpand" 
+                                   VerticalOptions="CenterAndExpand">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding IsLoading}" Value="true">
+                                        <Setter Property="Text" Value=""/>
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </ContentView>
+                    </CollectionView.EmptyView>
                     <CollectionView.ItemsLayout>
                         <LinearItemsLayout Orientation="Vertical" ItemSpacing="5"/>
                     </CollectionView.ItemsLayout>
@@ -186,6 +179,9 @@
                     </CollectionView.ItemTemplate>
                 </CollectionView>
             </RefreshView>
+
+            <!--Self-explanatory :)-->
+            <ActivityIndicator Grid.Row="2" IsRunning="{Binding IsLoading}" Color="Black" Scale="2" IsEnabled="{Binding IsLoading}"/>
 
         </Grid>
     </ContentPage.Content>

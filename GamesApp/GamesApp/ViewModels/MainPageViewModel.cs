@@ -26,26 +26,16 @@ namespace GamesApp.ViewModels
         public string CurMonthStr { get; set; }
         public string ActiveFilters { get; set; }
         public bool ActiveFiltersVisible { get; set; } = false;
+        public bool IsRefreshing { get; set; }
 
-        bool _IsRefreshing { get; set; }
-        public bool IsRefreshing
+        bool _IsLoading { get; set; }
+        public bool IsLoading
         {
-            get => _IsRefreshing;
+            get => _IsLoading;
             set
             {
-                _IsRefreshing = value;
-                OnPropertyChanged(nameof(IsRefreshing));
-            }
-        }
-
-        string _Message { get; set; }
-        public string   Message
-        {
-            get => _Message;
-            set 
-            { 
-                _Message = value;
-                OnPropertyChanged(nameof(Message)); 
+                _IsLoading = value;
+                OnPropertyChanged(nameof(IsLoading));
             }
         }
 
@@ -56,13 +46,11 @@ namespace GamesApp.ViewModels
             set
             {
                 _Games = value;
-                this.Message = "No games found!";
-
                 OnPropertyChanged(nameof(Games));
             }
         }
 
-        public List<Division>   Divisions { get; set; } = new List<Division>
+        public List<Division> Divisions { get; set; } = new List<Division>
         {
             new Division("NLRL", false, "Lietuvos \u010Dempionatas"),
             new Division("BHL", false, "Baltijos ledo ritulio lyga - D. Kasparai\u010Dio grup\u0117"),
@@ -97,10 +85,11 @@ namespace GamesApp.ViewModels
 
         private async Task ToggleShowAll()
         {
+            IsLoading = true;
             ShowMonth = !ShowMonth;
             CurMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             CurMonthStr = CurMonth.ToString("MMM");
-            
+
             try
             {
                 if (ShowMonth)
@@ -111,14 +100,19 @@ namespace GamesApp.ViewModels
             catch (Exception e)
             {
                 Console.WriteLine("Excepetion caught: " + e.Message);
-                Message = "⚠️ Something went wrong! ⚠️";
+                string message = "Something went wrong!";
+                if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+                    message = "No internet connection!";
+                await App.Current.MainPage.DisplayAlert("Alert", message, "Ok");
             }
 
+            IsLoading = false;
             OnPropertyChanged(nameof(ShowMonth));
         }
 
         private async Task ChangeMonth(string newMonth)
         {
+            IsLoading = true;
             CurMonth = CurMonth.AddMonths(int.Parse(newMonth));
             CurMonthStr = CurMonth.ToString("MMM");
 
@@ -129,9 +123,13 @@ namespace GamesApp.ViewModels
             catch (Exception e)
             {
                 Console.WriteLine("Excepetion caught: " + e.Message);
-                Message = "⚠️ Something went wrong! ⚠️";
+                string message = "Something went wrong!";
+                if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+                    message = "No internet connection!";
+                await App.Current.MainPage.DisplayAlert("Alert", message, "Ok");
             }
 
+            IsLoading = false;
             OnPropertyChanged(nameof(CurMonthStr));
         }
 
@@ -139,6 +137,8 @@ namespace GamesApp.ViewModels
         {
             if (ShowFilter == true)
             {
+                IsLoading = true;
+
                 if (Divisions.Find(d => d.IsChecked == false) == null)
                 {
                     //Check if all filter options ar checked, if so - all values are reset to initial ones
@@ -158,7 +158,10 @@ namespace GamesApp.ViewModels
                 catch (Exception e)
                 {
                     Console.WriteLine("Excepetion caught: " + e.Message);
-                    Message = "⚠️ Something went wrong! ⚠️";
+                    string message = "Something went wrong!";
+                    if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+                        message = "No internet connection!";
+                    await App.Current.MainPage.DisplayAlert("Alert", message, "Ok");
                 }
 
 
@@ -172,6 +175,7 @@ namespace GamesApp.ViewModels
 
                 ActiveFiltersVisible = Divisions.Find(d => d.IsChecked == true) != null;
 
+                IsLoading = false;
                 OnPropertyChanged(nameof(ActiveFilters));
                 OnPropertyChanged(nameof(ActiveFiltersVisible));
             }
@@ -182,6 +186,9 @@ namespace GamesApp.ViewModels
 
         private async Task ExecuteRefresh()
         {
+            IsRefreshing = true;
+            OnPropertyChanged(nameof(IsRefreshing));
+
             try
             {
                 if (ShowMonth)
@@ -192,13 +199,20 @@ namespace GamesApp.ViewModels
             catch (Exception e)
             {
                 Console.WriteLine("Excepetion caught: " + e.Message);
-                Message = "⚠️ Something went wrong! ⚠️";
+                string message = "Something went wrong!";
+                if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+                    message = "No internet connection!";
+                await App.Current.MainPage.DisplayAlert("Alert", message, "Ok");
             }
+
             IsRefreshing = false;
+            OnPropertyChanged(nameof(IsRefreshing));
         }
 
         public async Task LoadInitialData()
         {
+            IsLoading = true;
+
             try
             {
                 Games = await _repository.GetGames(Divisions);
@@ -206,13 +220,30 @@ namespace GamesApp.ViewModels
             catch (Exception e)
             {
                 Console.WriteLine("Excepetion caught: " + e.Message);
-                Message = "⚠️ Something went wrong! ⚠️";
+                string message = "Something went wrong!";
+                if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+                    message = "No internet connection!";
+                await App.Current.MainPage.DisplayAlert("Alert", message, "Ok");
             }
+
+            IsLoading = false;
+
         }
 
         private async Task CheckToken()
         {
-            await _repository.CheckAuthentication();
+            try
+            {
+                await _repository.CheckAuthentication();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Excepetion caught: " + e.Message);
+                string message = "Something went wrong!";
+                if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+                    message = "No internet connection!";
+                await App.Current.MainPage.DisplayAlert("Alert", message, "Ok");
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

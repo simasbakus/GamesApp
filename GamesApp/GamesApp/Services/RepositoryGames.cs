@@ -23,48 +23,72 @@ namespace GamesApp.Services
 
         public async Task<List<Game>> GetGames(List<Division> divisions)
         {
+            List<Game> games;
+            
             string divisionsQuery = GetDivisionsQuery(divisions);
+
+            // if no division filters are active try get games from cache
+            if (divisionsQuery == "")
+            {
+                games = await GetFromCache<List<Game>>("games");
+
+                if (games != null)
+                    return games;
+            }
 
             string token = await GetFromCache<string>("token");
 
-            List<Game> result;
-            if (divisionsQuery != "")
-                result = await _httpService.GetGames(token, divisionsQuery);
-            else
-                result = await _httpService.GetGames(token);
+            games = await _httpService.GetGames(token, divisionsQuery);
 
-            if (result != null)
-                return result;
+            if (games == null)
+            {
+                // if results from API where null check Token and try again
+                await CheckAuthentication();
 
-            // if results from API where null check Token and try again
-            await CheckAuthentication();
-            if (divisionsQuery != "")
-                return await _httpService.GetGames(token, divisionsQuery);
+                token = await GetFromCache<string>("token");
+
+                games = await _httpService.GetGames(token, divisionsQuery);
+            }
             
-            return await _httpService.GetGames(token);
+            if (divisionsQuery == "" && games.Count > 0)
+                await _cache.InsertObject("games", games, DateTimeOffset.Now.AddMinutes(5));
+
+            return games;
         }
 
         public async Task<List<Game>> GetMonthGames(string date, List<Division> divisions)
         {
+            List<Game> games;
+
             string divisionsQuery = GetDivisionsQuery(divisions);
+
+            // if no division filters are active try get games from cache
+            if (divisionsQuery == "")
+            {
+                games = await GetFromCache<List<Game>>($"games{date}");
+
+                if (games != null)
+                    return games;
+            }
 
             string token = await GetFromCache<string>("token");
 
-            List<Game> result;
-            if (divisionsQuery != "")
-                result = await _httpService.GetMonthGames(token, date, divisionsQuery);
-            else
-                result = await _httpService.GetMonthGames(token, date);
+            games = await _httpService.GetMonthGames(token, date, divisionsQuery);
 
-            if (result != null)
-                return result;
+            if (games == null)
+            {
+                // if results from API where null check Token and try again
+                await CheckAuthentication();
 
-            // if results from API where null check Token and try again
-            await CheckAuthentication();
-            if (divisionsQuery != "")
-                return await _httpService.GetMonthGames(token, date, divisionsQuery);
-            
-            return await _httpService.GetMonthGames(token, date);
+                token = await GetFromCache<string>("token");
+
+                games = await _httpService.GetMonthGames(token, date, divisionsQuery);
+            }
+
+            if (divisionsQuery == "" && games.Count > 0)
+                await _cache.InsertObject($"games{date}", games, DateTimeOffset.Now.AddMinutes(5));
+
+            return games;
         }
 
         public async Task CheckAuthentication()
@@ -75,7 +99,7 @@ namespace GamesApp.Services
             if (token == null || await _httpService.CheckToken(token) == false)
             {
                 token = await _httpService.GetToken();
-                await _cache.InsertObject("token", token, DateTimeOffset.Now.AddMinutes(20));
+                await _cache.InsertObject("token", token, DateTimeOffset.Now.AddMinutes(10));
             }
         }
 

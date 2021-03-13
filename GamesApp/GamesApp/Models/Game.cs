@@ -5,11 +5,12 @@ using System.Text;
 
 namespace GamesApp.Models
 {
+    [Serializable()]
     public class Game
     {
         private int Id { get; set; }
         public string UrlLink { get; set; }
-        public string DateStr { get; private set; }
+        public string DateStr { get; set; }
         public DateTime Date
         {
             get => DateTime.Parse(DateStr);
